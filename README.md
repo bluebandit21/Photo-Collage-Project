@@ -1,1 +1,1 @@
-# Photo-COllage-Project
+# Photo-Collage-Project
