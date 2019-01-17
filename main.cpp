@@ -1,5 +1,5 @@
 /*
- * Stich.cpp
+ * Stitch.cpp
  *
  *  Created on: Jan 8, 2019
  *      Author: plotner
