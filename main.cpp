@@ -7,7 +7,6 @@
 
 
 
-
 #include <highgui.hpp>
 #include <core.hpp>
 #include <iostream>
@@ -93,9 +92,7 @@ image_vector* decompose(string path, int g_size=1){
 		red_channel=channels[2];
 
 		double curr_b_sum=0, curr_g_sum=0, curr_r_sum=0;
-		image_vector temp (g_size,vector<vector<uint8_t> >(g_size,vector <uint8_t>(3)));
-		image_vector* output=new image_vector(temp);
-		image_vector outputp=*output;
+		image_vector* output = new vector<vector<vector<uint8_t> > >(g_size,vector<vector<uint8_t> >(g_size, vector<uint8_t>(3)));
 		int h_step=image.rows/g_size;
 		int w_step=image.cols/g_size;
 		for(int i=0;i<g_size;i++){
@@ -120,9 +117,9 @@ image_vector* decompose(string path, int g_size=1){
 
 
 				}
-				outputp[i][j][0]=curr_b_sum / w_step / h_step;
-				outputp[i][j][1]=curr_g_sum / w_step / h_step;
-				outputp[i][j][2]=curr_r_sum / w_step / h_step;
+				output->at(i)[j][0]= curr_b_sum / w_step / h_step;
+				output->at(i)[j][1]= curr_g_sum / w_step / h_step;
+				output->at(i)[j][2]= curr_r_sum / w_step / h_step;
 				curr_b_sum=0;
 				curr_g_sum=0;
 				curr_r_sum=0;
@@ -313,7 +310,7 @@ int main(int argc, char** argv){
 		c_size=atoi(argv[4]);
 	}
 	if(argc>5){
-		c_size=atoi(argv[5]);
+		g_size=atoi(argv[5]);
 	}
 	collage(source,directory,output_file,c_size,g_size);
 
