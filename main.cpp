@@ -79,7 +79,7 @@ int getdir (string dir, vector<string> &files){
 }
 
 image_vector decompose(string path, int g_size=1){
-	Mat image=cv::imread(path, CV_LOAD_IMAGE_COLOR);
+	Mat image=cv::imread(path, IMREAD_COLOR);
 	if(image.data==NULL){
 		image_vector temp;
 		return temp;
@@ -129,20 +129,30 @@ image_vector decompose(string path, int g_size=1){
 		return output;
 
 }
-image_vector stitch(vector<image_vector> vectors, int g_size, int c_size){
-	image_vector output (g_size*c_size,vector<vector<uint8_t> >(g_size*c_size,vector <uint8_t>(3)));
+Mat stitch(vector<image_vector> vectors, int g_size, int c_size){
+	int height=g_size*c_size;
+	int width=g_size*c_size;
+	Mat b_channel= Mat(height,width,CV_8U);
+	Mat g_channel= Mat(height,width,CV_8U);
+	Mat r_channel= Mat(height,width,CV_8U);
 	for(int ci=0;ci<c_size;ci++){
 		for(int cj=0;cj<c_size;cj++){
 			for(int gi=0;gi<g_size;gi++){
 				for(int gj=0;gj<g_size;gj++){
-					output[ci*g_size+gi][cj*g_size+gj][0]=vectors[ci*c_size+cj][gi][gj][0];
-					output[ci*g_size+gi][cj*g_size+gj][1]=vectors[ci*c_size+cj][gi][gj][1];
-					output[ci*g_size+gi][cj*g_size+gj][2]=vectors[ci*c_size+cj][gi][gj][2];
+					b_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][0];
+					g_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][1];
+					r_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][2];
 				}
 			}
 		}
 	}
-	return output;
+	vector<Mat> channels;
+	channels.push_back(b_channel);
+	channels.push_back(g_channel);
+	channels.push_back(r_channel);
+	Mat merge=Mat(height,width,CV_8UC3);
+	cv::merge(channels,merge);
+	return merge;
 }
 FOutput match(vector<IPair> images, vector<uint8_t> goal){
 	string best_path="";
@@ -168,7 +178,7 @@ vector<FOutput> match_list(vector<IPair> images, image_vector* goal){
 }
 vector<uint8_t> average(string path){
 	Mat image;
-	image=cv::imread(path, CV_LOAD_IMAGE_COLOR);
+	image=cv::imread(path, IMREAD_COLOR);
 	if(image.data==NULL){
 		vector<uint8_t> temp;
 		return temp;
@@ -285,13 +295,12 @@ void collage(string image_path, string images_dir, string output_path, int c_siz
 	cout << "Decomposing lists..." << endl;
 	vector<image_vector> d_list=decompose_list(paths, g_size); //This is a caching operation.
 	cout << "Stitching images..." << endl;
-	image_vector stitched=stitch(d_list, g_size, c_size);
+	Mat stitched=stitch(d_list, g_size, c_size);
 	cout << "Encoding image..." << endl;
-	Mat encoded=encode(stitched, g_size*c_size, g_size*c_size);
 	cout << "Writing image to disk..." << endl;
-	imwrite(output_path, encoded);
+	imwrite(output_path, stitched);
 	namedWindow ("Test", WINDOW_NORMAL);
-	imshow("Test", encoded);
+	imshow("Test", stitched);
 	cout << "Press any key to continue." << endl;
 	waitKey(0);
 	return;
