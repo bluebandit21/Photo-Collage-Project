@@ -311,7 +311,7 @@ int main(int argc, char** argv){
 		c_size=atoi(argv[4]);
 	}
 	if(argc>5){
-		c_size=atoi(argv[5]);
+		g_size=atoi(argv[5]);
 	}
 	collage(source,directory,output_file,c_size,g_size);
 
