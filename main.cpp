@@ -131,7 +131,7 @@ image_vector* decompose(string path, int g_size=1){
 
 }
 
-Mat stitch(vector<image_vector> vectors, int g_size, int c_size){
+Mat stitch(vector<image_vector*> vectors, int g_size, int c_size){
   int height=g_size*c_size;
 	int width=g_size*c_size;
 	Mat b_channel= Mat(height,width,CV_8U);
@@ -143,9 +143,9 @@ Mat stitch(vector<image_vector> vectors, int g_size, int c_size){
 			image_vector temp=*(vectors[ci*c_size+cj]);
 			for(int gi=0;gi<g_size;gi++){
 				for(int gj=0;gj<g_size;gj++){
-					b_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][0];
-					g_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][1];
-					r_channel.at<uchar>(gi,gj)=vectors[ci*c_size+cj][gi][gj][2];
+					b_channel.at<uchar>(ci*g_size+gi,cj*g_size+gj)=temp[gi][gj][0];
+					g_channel.at<uchar>(ci*g_size+gi,cj*g_size+gj)=temp[gi][gj][1];
+					r_channel.at<uchar>(ci*g_size+gi,cj*g_size+gj)=temp[gi][gj][2];
 				}
 			}
 		}
