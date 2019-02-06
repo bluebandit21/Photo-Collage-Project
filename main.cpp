@@ -258,26 +258,7 @@ vector<image_vector*> decompose_list(vector<string> paths, int g_size=20){
 	}
 	return output;
 }
-Mat encode(image_vector image, int height, int width){
-	Mat b_channel= Mat(height,width,CV_8U);
-	Mat g_channel= Mat(height,width,CV_8U);
-	Mat r_channel= Mat(height,width,CV_8U);
-	for(int i=0;i<height;i++){
-		for(int j=0;j<width;j++){
-			b_channel.at<uchar>(i,j)=image[i][j][0];
-			g_channel.at<uchar>(i,j)=image[i][j][1];
-			r_channel.at<uchar>(i,j)=image[i][j][2];
-		}
-	}
-	vector<Mat> channels;
-	channels.push_back(b_channel);
-	channels.push_back(g_channel);
-	channels.push_back(r_channel);
 
-	Mat merge=Mat(height,width,CV_8UC3);
-	cv::merge(channels,merge);
-	return merge;
-}
 void collage(string image_path, string images_dir, string output_path, int c_size=200, int g_size=50){
 	vector<string> files=vector<string>();
 	getdir(images_dir, files);
